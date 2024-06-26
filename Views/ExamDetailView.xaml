@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AISchoolManagementApp.Views.ExamDetailView"
+             xmlns:vm="clr-namespace:AISchoolManagementApp.ViewModels"
+             x:DataType="vm:ExamDetailViewModel"
+             xmlns:model="clr-namespace:AISchoolManagementApp.Models"
+             xmlns:converters="clr-namespace:AISchoolManagementApp.Converters"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <converters:OptionToAnswerConverter x:Key="optionToAnswerConverter"/>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Generate" 
+                     IsEnabled="{Binding IsNew}"
+                     IconImageSource="dotnet_bot.png" 
+                     Command="{Binding GenerateExamCommand}"/>
+
+        <ToolbarItem Text="Evaluate" 
+                     IconImageSource="dotnet_bot.png" 
+                     Command="{Binding EvaluateAnswersCommand}"/>
+
+        <ToolbarItem Text="Save" 
+                     IsEnabled="{Binding IsNew}"
+                     IconImageSource="dotnet_bot.png" 
+                     Command="{Binding SaveExamCommand}"/>
+
+        <ToolbarItem Text="PDF" 
+                     IconImageSource="dotnet_bot.png" 
+                     Command="{Binding ViewPDFCommand}"/>
+
+        <ToolbarItem Text="Delete" 
+                     IsEnabled="{Binding IsNotNew}"
+                     IconImageSource="dotnet_bot.png" 
+                     Command="{Binding DeleteExamCommand}"/>
+
+    </ContentPage.ToolbarItems>
+
+    <Grid Margin="10"
+          ColumnSpacing="10"
+          RowSpacing="10"
+          RowDefinitions="Auto,Auto,Auto,*"
+          ColumnDefinitions="*,*">
+
+        <HorizontalStackLayout Grid.Row="0"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               Spacing="10">
+
+            <Label VerticalOptions="Center"
+                   Text="What's the exam about?" 
+                   FontAttributes="Bold"/>
+
+            <Entry VerticalOptions="Center"
+                   Placeholder="Enter the exam topic here"
+                   FontAttributes="Bold"
+                   IsEnabled="{Binding IsNew}"
+                   WidthRequest="300"
+                   Text="{Binding Topic}"/>
+
+        </HorizontalStackLayout>
+
+        <ActivityIndicator Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2"
+                           HorizontalOptions="Center"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="True"
+                           Color="Orange"/>
+
+        <HorizontalStackLayout Grid.Row="1"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               HorizontalOptions="Start"
+                               Spacing="5">
+
+            <CheckBox IsChecked="{Binding ShowCorrectAnswer}"
+                      VerticalOptions="Center"/>
+
+            <Label Text="Reveal Correct Answer"
+                   VerticalOptions="Center"/>
+
+        </HorizontalStackLayout>
+
+        <Label Grid.Row="2" 
+               Text="Question List"
+               FontSize="Medium"
+               FontAttributes="Bold"/>
+
+        <CollectionView Grid.Row="3"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Start"
+                        EmptyView="No questions have been generated yet!"
+                        ItemsSource="{Binding Questions}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Question">
+                    <VerticalStackLayout Spacing="5" 
+                                         Margin="10" 
+                                         Padding="5"
+                                         RadioButtonGroup.GroupName="{Binding Number}"
+                                         RadioButtonGroup.SelectedValue="{Binding SelectedOption}">
+                        <Label Text="{Binding Number, StringFormat='Question {0}:'}"
+                                   FontAttributes="Bold"/>
+                        <Label Text="{Binding Content}"
+                               FontAttributes="Bold"
+                               />
+                        <RadioButton Content="{Binding OptionA}" Value="A">
+                            <RadioButton.TextColor>
+                                <MultiBinding Converter="{StaticResource optionToAnswerConverter}" 
+                                              ConverterParameter="A">
+                                    <Binding Path="CorrectOption" />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}" 
+                                             Path="ShowCorrectAnswer" />
+                                </MultiBinding>
+                            </RadioButton.TextColor>
+                        </RadioButton>
+
+                        <RadioButton Content="{Binding OptionB}" Value="B">
+                            <RadioButton.TextColor>
+                                <MultiBinding Converter="{StaticResource optionToAnswerConverter}" 
+                                              ConverterParameter="B">
+                                    <Binding Path="CorrectOption" />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}" 
+                                             Path="ShowCorrectAnswer" />
+                                </MultiBinding>
+                            </RadioButton.TextColor>
+                        </RadioButton>
+
+                        <RadioButton Content="{Binding OptionC}" Value="C">
+                            <RadioButton.TextColor>
+                                <MultiBinding Converter="{StaticResource optionToAnswerConverter}" 
+                                              ConverterParameter="C">
+                                    <Binding Path="CorrectOption" />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}" 
+                                             Path="ShowCorrectAnswer" />
+                                </MultiBinding>
+                            </RadioButton.TextColor>
+                        </RadioButton>
+
+                        <RadioButton Content="{Binding OptionD}" Value="D">
+                            <RadioButton.TextColor>
+                                <MultiBinding Converter="{StaticResource optionToAnswerConverter}" 
+                                              ConverterParameter="D">
+                                    <Binding Path="CorrectOption" />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}" 
+                                             Path="ShowCorrectAnswer" />
+                                </MultiBinding>
+                            </RadioButton.TextColor>
+                        </RadioButton>
+
+                        <!--<Label Text="{Binding CorrectOption,StringFormat='Correct Answer: {0}'}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=ShowCorrectAnswer}"
+                        FontAttributes="Bold,Italic"/>-->
+
+                        <Label Text="{Binding Citation.filepath, StringFormat='Referencia: {0}'}"
+                               TextDecorations="Underline">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamDetailViewModel}}, Path=BrowseUrlCommand}"
+                                                      CommandParameter="{Binding Citation.url}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="Green"
+                                 VerticalOptions="End"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AISchoolManagementApp.Views.ExamsView"
+             xmlns:vm="clr-namespace:AISchoolManagementApp.ViewModels"
+             x:DataType="vm:ExamsViewModel"
+             xmlns:model="clr-namespace:AISchoolManagementApp.Models"
+             Title="{Binding Title}">
+    <Grid Margin="10"
+          ColumnSpacing="10"
+          RowSpacing="10"
+          RowDefinitions="Auto,Auto,Auto,*">
+
+        <Button Grid.Row="0" 
+                Text="Create New Exam"
+                HorizontalOptions="Center"
+                Command="{Binding GoToDetailsCommand}"/>
+
+        <ActivityIndicator Grid.Row="1" 
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="True"
+                           Color="Orange"/>
+
+        <Label Grid.Row="2" 
+               Text="Exam List"
+               FontSize="Medium"
+               FontAttributes="Bold"/>
+
+        <CollectionView Grid.Row="3"
+                        VerticalOptions="Start"
+                        HorizontalOptions="Start"
+                        EmptyView="No exams have been added yet!"
+                        ItemsSource="{Binding Exams}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedExam}"
+                        SelectionChangedCommand="{Binding GoToDetailsCommand}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Exam">
+                    <Grid WidthRequest="300"
+                          VerticalOptions="Start">
+                        <Label Text="{Binding Topic}"
+                               Margin="5"
+                               VerticalOptions="Center"
+                               TextColor="Green"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
